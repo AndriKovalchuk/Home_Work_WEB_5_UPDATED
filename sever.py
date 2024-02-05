@@ -4,7 +4,6 @@ from datetime import datetime, timedelta
 import httpx
 import websockets
 import names
-from rich.console import Console
 from rich.text import Text
 from websockets import WebSocketServerProtocol
 from websockets.exceptions import ConnectionClosedOK
@@ -37,7 +36,6 @@ async def request(url: str) -> dict | str:
 
 
 async def get_exchange(days: int = None):
-    console = Console()
     response = await request(
         f"https://api.privatbank.ua/p24api/exchange_rates?date=01.12.2014"
     )
@@ -45,7 +43,7 @@ async def get_exchange(days: int = None):
     current_date = datetime.now().date()
     if not days:
 
-        table = Table(title='Contacts list', title_style='bold')
+        table = Table(title=f'Currency exchange for {current_date}', title_style='bold')
         table.add_column('Currency')
         table.add_column('Sale')
         table.add_column('Purchase')
@@ -106,7 +104,6 @@ async def get_exchange(days: int = None):
 
 class Server:
     clients = set()  # Clients who joined the server
-    console = Console()
 
     async def register(self, ws: WebSocketServerProtocol):
         ws.name = names.get_full_name()
